@@ -8,10 +8,34 @@
 #define NUMBER_OF_CARDS     14
 #define NUMBER_OF_COLORS    4
 
+typedef enum{
+    NONE,
+    ACE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE,
+    TEN,
+    JACK,
+    QUEEN,
+    KING,
+}card_types_t;
+
+typedef enum{
+    CLUBS,
+    DIAMONDS,
+    HEARTS,
+    SPADES,
+}card_colors_t;
+
 typedef struct 
 {
-    int val;
-    unsigned int color;
+    card_types_t type;
+    card_colors_t color;
 }card_t;
 
 bool deckArray[53];
@@ -23,7 +47,7 @@ void clearDeck(bool *decArr)
     memset(decArr, false, sizeof(decArr));
 }
 
-card_t drawCard(void)
+card_t drawCard(bool *deckArr)
 {
     card_t card;
     int val;
@@ -38,17 +62,17 @@ card_t drawCard(void)
         {        
             val = val %52;
             if(val == 0)    val = 52;
-            if(deckArray[val] == false)
+            if(deckArr[val] == false)
             {                
-                if(val <=13)  card.color = 0;
-                else if(val <= 26)    card.color = 1;
-                else if(val <= 39)    card.color = 2;
-                else    card.color = 3;
+                if(val <=13)  card.color = CLUBS;
+                else if(val <= 26)    card.color = DIAMONDS;
+                else if(val <= 39)    card.color = HEARTS;
+                else    card.color = SPADES;
     
-                if(val == 13 || val == 26 || val ==39 || val == 52)     card.val = 13;
-                else    card.val = val % 13;
+                if(val == 13 || val == 26 || val ==39 || val == 52)     card.type = KING;
+                else    card.type = val % 13;
                 
-                deckArray[val] = true;
+                deckArr[val] = true;
                 valid = true;                
             }   
         }             
@@ -58,7 +82,7 @@ card_t drawCard(void)
 
 void printCard(card_t* card)
 {        
-    printf("%s %s\n", colors[card->color], cards[card->val]);    
+    printf("%s %s\n", colors[card->color], cards[card->type]);    
 }
 
 int main(void)
@@ -66,7 +90,7 @@ int main(void)
     clearDeck(deckArray);
     for (int i = 0; i < 52; i++)
     {
-        card_t card = drawCard();
+        card_t card = drawCard(deckArray);
         printCard(&card);
     }    
     return 0;
