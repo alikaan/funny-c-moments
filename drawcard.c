@@ -8,6 +8,11 @@
 #define NUMBER_OF_CARDS     14
 #define NUMBER_OF_COLORS    4
 
+#define END_OF_CLUBS        13
+#define END_OF_DIAMONDS     26
+#define END_OF_HEARTS       39
+#define END_OF_SPADES       52
+
 typedef enum{
     NONE,
     ACE,
@@ -64,12 +69,12 @@ card_t drawCard(bool *deckArr)
             if(val == 0)    val = 52;
             if(deckArr[val] == false)
             {                
-                if(val <=13)  card.color = CLUBS;
-                else if(val <= 26)    card.color = DIAMONDS;
-                else if(val <= 39)    card.color = HEARTS;
+                if(val <= END_OF_CLUBS)  card.color = CLUBS;
+                else if(val <= END_OF_DIAMONDS)    card.color = DIAMONDS;
+                else if(val <= END_OF_HEARTS)    card.color = HEARTS;
                 else    card.color = SPADES;
     
-                if(val == 13 || val == 26 || val ==39 || val == 52)     card.type = KING;
+                if(val == END_OF_CLUBS || val == END_OF_DIAMONDS || val ==END_OF_HEARTS || val == END_OF_SPADES)     card.type = KING;
                 else    card.type = val % 13;
                 
                 deckArr[val] = true;
@@ -87,7 +92,7 @@ void printCard(card_t* card)
 
 int main(void)
 {    
-    clearDeck(deckArray);
+    clearDeck(&deckArray[0]);
     for (int i = 0; i < 52; i++)
     {
         card_t card = drawCard(deckArray);
