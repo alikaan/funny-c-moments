@@ -44,12 +44,13 @@ int main(void) {
         c = getchar();	// not available on FRC
         i = 0;
 
-        while (commands[i++].cmd) 
+        while (commands[i].cmd) 
         {
 	        if (commands[i].cmd == c) 
 	        {		        
         		(*(commands[i].function))();
             }	        
+            i++;
         }
     }
 }
