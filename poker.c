@@ -51,7 +51,7 @@ typedef enum{
     FOUR_OF_A_KIND,
     STRAIGHT_FLUSH,
     ROYAL_FLUSH,
-}hand_ranks_t;
+}ranks_t;
 
 typedef struct {
     card_types_t type;
@@ -62,7 +62,8 @@ typedef struct
 {
     char name[20];
     card_t cards[5];
-    hand_ranks_t rank;
+    ranks_t rank;
+    uint16_t highCard;
 }player_t;
 
 bool deckArray[53];
@@ -148,6 +149,10 @@ int main(void)
     for(int i = 0; i < 3; i++) 
     {
         board[i] = drawCard(deckArray);
+        for(int j = 0; j < NUMBER_OF_PLAYERS; j++)
+        {
+            player[j].cards[i + 2] = board[i];
+        }
         printf("Board's %d. card is %s %s\n", i, colors[board[i].color], cards[board[i].type] );                                
     }
     return 0;
