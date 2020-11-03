@@ -2,49 +2,69 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-char *buf;
+char *buffer;
 
-char *range_extraction(const int* args, size_t n)
+typedef struct
+{
+  bool start;
+  int count;
+  int start_index;
+  int end_index;
+}repeat_t;
+
+char *range_extraction(const int *args, size_t n)
 {    
-  const int* ptr = args;
-  buf = (char*) malloc(n*2);
-  char* b = buf;
-  
-  int inc_ct = 0;  
-  bool firstValue = true;
-  
-  while( n != 0 )
+  const int *ptr = args;  
+  buffer = (char*) malloc(sizeof(char)*1000);
+  char* b = buffer;  
+
+  repeat_t repeat  = { .start = false, .count = 0, .start_index = 0, .end_index = 0 };
+    
+  for(int i = 0; i < (int)n; i++)
   {
-    n--;
-    if(firstValue)
+    if(ptr[i] + 1 == (ptr[i+1] )) 
     {
-        firstValue = false;
-        continue;
+      repeat.start = true;
+      repeat.count++;
+      if(repeat.count == 1) 
+      {        
+        repeat.start_index = i;
+      }      
     }
-    if( *ptr == *(ptr - 1) + 1 ) inc_ct++;
-    else 
+    else
     {
-      int ct = 0;
-      if(inc_ct == 0)
-      {
-        ct = sprintf(b, "%d,", *ptr);
-      }
+      if(repeat.start)
+      {        
+        repeat.end_index = i;
+        if(repeat.count >= 2)
+        {
+          b += sprintf(b, "%d-%d,", ptr[repeat.start_index], ptr[repeat.end_index] );
+        }
+        else
+        {
+          b += sprintf(b, "%d,%d,", ptr[repeat.start_index], ptr[i]);
+        }        
+        repeat.start = false;
+        repeat.count = 0;
+      }      
       else
       {
-        ct = sprintf(b, "%d-%d,", *(ptr - inc_ct), *ptr );
-      }
-      b += ct;
-      inc_ct = 0;
-    }    
-    ptr++;
+        b += sprintf(b, "%d,", ptr[i]);
+      }      
+    }              
   }
-  return buf;
+  *(b-1) = '\0';
+  printf("%s\n", buffer);
+  return buffer;
 }
-
 
 int main()
 {
-    char* p = range_extraction((const int []){ -6,-3,-2,-1,0,1,3,4,5,7,8,9,10,11,14,15,17,18,19,20 }, 20ul);
-    printf("%s",p);
+    range_extraction((const int[]){ -6,-3,-2,-1,0,1,3,4,5,7,8,9,10,11,14,15,17,18,19,20 }, 20ul);
+    range_extraction((const int[]){ -6,-3,-2,-1,0,1,3,4,5,7,8,9,10,11,14,15,17,18,19,20 }, 20ul);
+    range_extraction((const int[]){ -3,-2,-1,2,10,15,16,18,19,20 }, 10ul);
+    range_extraction((const int[]){ -5,-4,-3,-2,-1,0,1,2,3,4,5 }, 11ul);
+    range_extraction((const int[]){ -5,-4,-2,-1,1,2,4,5 }, 8ul);
+    range_extraction((const int[]){ 9 }, 1ul);
     return 0;
 }
